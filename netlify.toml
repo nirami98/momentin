@@ -3,6 +3,9 @@
   publish = "dist"
 [build.environment]
   NODE_VERSION = "22"
+  # Public configuration, not authentication credentials. These values also
+  # appear in examples/tests; keep database URL and owner-token scanning enabled.
+  SECRETS_SCAN_OMIT_KEYS = "OWNER_ID,OWNER_TIME_ZONE"
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"

@@ -59,6 +59,7 @@ The SQL migration is additive and can be re-run. It creates `habits` and `check_
    - Functions directory: `netlify/functions`
    - Node version: 22
 3. Add `DATABASE_URL`, `OWNER_ACCESS_TOKEN`, `OWNER_ID`, and `OWNER_TIME_ZONE` as Netlify environment variables available to Functions. Keep the same owner ID as local testing. You do not need `PORT` on Netlify.
+   Mark only `DATABASE_URL` and `OWNER_ACCESS_TOKEN` as secret values. `OWNER_ID` and `OWNER_TIME_ZONE` are ordinary configuration, not credentials. If all four were imported as secrets, the repository's `SECRETS_SCAN_OMIT_KEYS` setting excludes only those two non-secret keys from value scanning. Credential scanning remains enabled. Keep these variables in the Production deploy context; use separate credentials/data for previews later.
 4. Deploy and open the assigned HTTPS URL. Connect with the owner key through Workspace setup.
 5. Open that same URL on your phone using mobile data. Reconnect with the key and verify that the same habit and progress appear. Your laptop can be off.
 
