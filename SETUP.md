@@ -2,6 +2,22 @@
 
 The foundation runs immediately in browser-demo mode. Follow these steps to enable your private, persistent workspace. Do not paste credentials into chat or commit `.env`.
 
+## Neon CLI setup (alternative to copying a connection string)
+
+The workspace has been initialized for project `gentle-mountain-76129959`, branch `production`, in organization `org-still-shape-71693278`. Initialization alone does not verify access or provision services. `neon.ts` declares the PostgreSQL-only setup with authentication disabled; the API continues to run locally or on Netlify.
+
+Sign in through the browser when prompted, then inspect and apply the configuration:
+
+```sh
+neon login
+neon config plan
+neon deploy
+```
+
+The CLI pulls connection settings into `.env.local` or `.env`. Both are ignored by Git. The local API and migration command load `.env.local` first, then `.env`, with existing process variables taking priority. Keep Neon-managed database values in the file the CLI writes; avoid conflicting values in both files. Migrations prefer `DATABASE_URL_UNPOOLED` when provided, while application queries use `DATABASE_URL` through the Neon HTTP driver.
+
+Still configure the owner key, owner ID, and time zone described below; Neon does not generate those app-specific settings. Do not overwrite a CLI-created environment file with the example file. No Netlify deployment is performed by `neon deploy`.
+
 ## 1. Create a separate Neon project
 
 1. Sign in at [Neon](https://console.neon.tech).

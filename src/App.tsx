@@ -39,7 +39,7 @@ export function App() {
     return () => clearInterval(timer);
   }, [data.date, token]);
   async function request<T>(path: string, options: RequestInit = {}, access = token): Promise<T> {
-    const response = await fetch(`/api${path}`, { ...options, headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${access}` } });
+    const response = await fetch(`/api${path}`, { ...options, signal: AbortSignal.timeout(20000), headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${access}` } });
     let result;
     try { result = await response.json(); } catch { throw new Error('The API could not be reached. Start npm run dev or check the Netlify deployment.'); }
     if (!response.ok) throw new Error(result.error ?? 'Could not save. Please try again.');
@@ -47,7 +47,7 @@ export function App() {
   }
   async function connect(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError('');
-    try { const next = await request<Snapshot>('/habits', {}, keyInput); setToken(keyInput); setKeyInput(''); setData(next); setPage('today'); setNotice('Connected to your private workspace. Demo records were not imported.'); }
+    try { const next = await request<Snapshot>('/habits', {}, keyInput.trim()); setToken(keyInput.trim()); setKeyInput(''); setData(next); setPage('today'); setNotice('Connected to your private workspace. Demo records were not imported.'); }
     catch (e) { setError((e as Error).message); } finally { setBusy(false); }
   }
   async function refresh() {
@@ -91,7 +91,7 @@ export function App() {
     <main>
       <header className="topbar"><span>Your day, with intention</span><div><span className={`mode ${token ? 'connected' : ''}`}>{token ? 'Private workspace' : 'Browser demo'}</span><span className="avatar" aria-label="Your workspace">M</span></div></header>
       <div className="content">
-        {error && <div className="message error" role="alert">{error}<button aria-label="Dismiss error" onClick={() => setError('')}>×</button></div>}
+        {error && (page !== 'setup' || token) && <div className="message error" role="alert">{error}<button aria-label="Dismiss error" onClick={() => setError('')}>×</button></div>}
         {notice && <div className="message" role="status">{notice}</div>}
         {page === 'today' ? <>
           <div className="page-heading"><div><p className="eyebrow">{displayDate}</p><h1>A little progress,<br/><em>just for you.</em></h1><p className="subtitle">Make space for what matters. One small action at a time.</p></div><button className="primary" onClick={() => setAdding(!adding)} aria-expanded={adding}>+ Add a habit</button></div>
@@ -107,7 +107,7 @@ export function App() {
           <footer><span>Made for your real life, not a perfect routine.</span><span>{data.timeZone} · Daily view</span></footer>
         </> : <>
           <div className="page-heading"><div><p className="eyebrow">A HOME FOR YOUR PROGRESS</p><h1>Your workspace,<br/><em>connected.</em></h1><p className="subtitle">Start here when your private backend is ready.</p></div></div>
-          <div className="setup-grid"><section className="panel"><h2>{token ? 'You’re connected' : 'Open your private workspace'}</h2><p className="muted">This foundation uses a temporary owner key. Full account sign-in will arrive in the next milestone. Your key stays in memory and is cleared on refresh.</p>{token ? <button className="secondary" onClick={() => { setToken(''); setData(readDemo()); setNotice('Disconnected. You are back in the browser demo.'); }}>Disconnect</button> : <form onSubmit={connect}><label>Owner access key<input type="password" value={keyInput} onChange={e => setKeyInput(e.target.value)} autoComplete="off" required minLength={32} placeholder="Enter your private owner key"/></label><button className="primary" disabled={busy}>{busy ? 'Connecting…' : 'Connect workspace →'}</button></form>}</section><section className="panel"><h2>Before you connect</h2><ol className="setup-steps"><li>Create a separate Momentin database in Neon.</li><li>Configure the server environment and owner key.</li><li>Run the foundation database migration.</li><li>Start locally or deploy through Netlify.</li></ol><p className="muted">Follow <code>SETUP.md</code> in the project for exact commands and settings. Demo records are separate and are never automatically uploaded.</p></section></div>
+          <div className="setup-grid"><section className="panel"><h2>{token ? 'You’re connected' : 'Open your private workspace'}</h2><p className="muted">This foundation uses a temporary owner key. Full account sign-in will arrive in the next milestone. Your key stays in memory and is cleared on refresh.</p>{token ? <button className="secondary" onClick={() => { setToken(''); setData(readDemo()); setNotice('Disconnected. You are back in the browser demo.'); }}>Disconnect</button> : <form onSubmit={connect}>{error && <div className="message error" role="alert">{error}</div>}<label>Owner access key<input type="password" value={keyInput} onChange={e => setKeyInput(e.target.value)} autoComplete="off" required minLength={32} placeholder="Enter your private owner key"/></label><button className="primary" disabled={busy}>{busy ? 'Connecting…' : 'Connect workspace →'}</button></form>}</section><section className="panel"><h2>Before you connect</h2><ol className="setup-steps"><li>Create a separate Momentin database in Neon.</li><li>Configure the server environment and owner key.</li><li>Run the foundation database migration.</li><li>Start locally or deploy through Netlify.</li></ol><p className="muted">Follow <code>SETUP.md</code> in the project for exact commands and settings. Demo records are separate and are never automatically uploaded.</p></section></div>
           <section className="panel milestone"><span className="eyebrow">FOUNDATION · 0.1</span><h2>What’s ready, what’s next</h2><p>Ready: daily habits, numeric check-ins, same-day undo, browser demo, owner-protected API, and saved appearance.</p><p className="muted">Next: real accounts, onboarding, schedule versions, history and annotations. Streaks, XP, freezes, uploads, and social features are not active yet.</p></section>
         </>}
       </div>
