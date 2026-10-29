@@ -10,6 +10,18 @@ type Config = { token?: string; owner?: string; timeZone?: string; databaseUrl?:
 export function createApp(config: Config = {}) {
   const app = express();
   app.disable('x-powered-by');
+  // serverless-http supplies a buffered body on an already-complete request.
+  // Express 5's JSON parser skips that stream, so decode it explicitly.
+  app.use((req, res, next) => {
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0 || !req.is('application/json')) { next(); return; }
+    if (req.body.length > 16 * 1024) { res.status(400).json({ error: 'Invalid request body.' }); return; }
+    try {
+      const body = JSON.parse(req.body.toString('utf8'));
+      if (body === null || typeof body !== 'object') throw new Error('Invalid JSON body');
+      req.body = body;
+      next();
+    } catch { res.status(400).json({ error: 'Invalid request body.' }); }
+  });
   app.use(express.json({ limit: '16kb' }));
   app.use((_req, res, next) => { res.setHeader('Cache-Control', 'no-store'); next(); });
   const router = express.Router();
