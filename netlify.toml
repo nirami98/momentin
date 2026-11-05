@@ -5,7 +5,7 @@
   NODE_VERSION = "22"
   # Public configuration, not authentication credentials. These values also
   # appear in examples/tests; keep database URL and owner-token scanning enabled.
-  SECRETS_SCAN_OMIT_KEYS = "OWNER_ID,OWNER_TIME_ZONE"
+  SECRETS_SCAN_OMIT_KEYS = "OWNER_ID,OWNER_TIME_ZONE,BETTER_AUTH_URL"
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
