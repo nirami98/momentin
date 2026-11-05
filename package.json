@@ -12,22 +12,31 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --test server/*.test.ts",
     "preview": "vite preview --host 127.0.0.1",
-    "db:migrate": "tsx scripts/migrate.ts"
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:migrate:auth": "tsx scripts/migrate-auth.ts",
+    "test:browser": "playwright test",
+    "dev:web:test": "vite --host 127.0.0.1 --port 5178 --strictPort"
   },
   "dependencies": {
     "@neon/config": "^1.9.5",
     "@neon/env": "^1.6.6",
     "@neondatabase/serverless": "^1.0.2",
+    "better-auth": "^1.7.15",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "nodemailer": "^10.3.1",
+    "pg": "^8.23.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "serverless-http": "^3.2.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/express": "^5.0.3",
     "@types/node": "^24.10.0",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/supertest": "^6.0.3",

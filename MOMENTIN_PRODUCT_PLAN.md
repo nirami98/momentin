@@ -1,7 +1,7 @@
 # Momentin — Product Description and Phased Development Plan
 
 **Planning date:** October 8, 2026  
-**Last revised:** October 28, 2026  
+**Last revised:** November 3, 2026
 **Platform:** Responsive browser application; installation deferred to Phase 8  
 **Status:** Confirmed decisions and proposed implementation roadmap; unresolved choices are listed in Section 12
 
@@ -87,8 +87,8 @@ The product should be fully useful to a private individual. Public posting, comp
 - The primary streak is overall daily participation: fully completing at least one habit in a user-local day extends it once, even if nine other habits remain incomplete. It does not claim that all planned habits were completed.
 - Full completion of the configured habit target is necessary for streak credit and completion XP. Partial effort and fallback actions remain visible in history and charts but earn neither. Target changes apply prospectively.
 - Keep individual habit consistency separate from the overall streak. Unscheduled days do not break an individual scheduled streak; weekly-target habits use completed weekly targets as their individual streak unit.
-- Pausing does not itself preserve a streak or generate completion credit. Pausing one habit must not cancel overall streak credit earned by completing another. How freezes interact with a day when all habits are paused or unscheduled remains open.
-- Grant each user two automatic streak freezes per month. Under the newly requested overall-streak model, freeze coverage needs confirmation: recommend protecting only the overall streak after a day with zero fully completed habits, without completing or protecting missed individual habits. A freeze awards no completion XP. Rollover and rest-day behaviour remain open in Section 12.
+- Pausing does not itself preserve a streak or generate completion credit. Pausing one habit must not cancel overall streak credit earned by completing another. A day with all habits paused or unscheduled can consume an available freeze to protect an existing overall streak.
+- Grant each user two automatic streak freezes per month. Protect only an existing overall streak after a day with zero fully completed habits, without increasing the streak or completing or protecting missed individual habits. A freeze awards no completion XP. Grants reset each local calendar month with no rollover, including coverage for all-paused or unscheduled days.
 - Lock completion, measurements, and earned XP after their applicable user-local day ends: no ordinary backdated completion or edits to prior-day progress. Same-day edits remain available. Allow later dated annotations without changing the original result or score.
 - Tasks remain overdue for five full local calendar days after their due date, then become missed: an October 12 task is overdue October 13–17 and missed from October 18. Allow subsequent completion with a late marker, preserving the missed/deadline history and recording completion on the actual day without rewriting a past day's score. Each recurring occurrence retains its own history.
 - Goal progress is configurable per goal and can be calculated from achieved milestones. One activity can contribute to multiple goals without generating duplicate activity XP. Supported calculation modes and milestone weighting remain to be specified.
@@ -131,7 +131,7 @@ The product should be fully useful to a private individual. Public posting, comp
 
 Every phase must produce a runnable local browser increment with real persistence and a documented end-to-end walkthrough for its implemented flows. Use multiple local test accounts to exercise privacy, templates, and later social features. Add a development-only controllable clock for day-end locking, freezes, overdue tasks, and ranking transitions. Local testing starts with Phase 1 and continues throughout; Phase 9 remains broader beta and launch validation. No public deployment or installation is required for this workflow.
 
-The same responsive application must adapt layouts, navigation, and controls to laptop and phone screens. Device testing must support a phone on mobile data while the laptop uses a different network. Prefer a Netlify-hosted development version once a working increment is ready, with application login and server-enforced access limited to the owner/test accounts. A reachable website does not imply open registration or public access to records. This removes the need to keep the laptop running for remote testing. Continue local development and testing alongside hosted previews. Do not expose the database or development admin/clock controls. A separate introductory/marketing homepage is not required for responsive device access and is not currently committed. No deployment has been performed yet.
+The same responsive application must adapt layouts, navigation, and controls to laptop and phone screens. Device testing must support a phone on mobile data while the laptop uses a different network. Prefer a Netlify-hosted development version once a working increment is ready, with application login and server-enforced access limited to the owner/test accounts. A reachable website does not imply open registration or public access to records. This removes the need to keep the laptop running for remote testing. Continue local development and testing alongside hosted previews. Do not expose the database or development admin/clock controls. A separate introductory/marketing homepage is not required for responsive device access and is not currently committed. The foundation is deployed on Netlify and connected to Neon; account authentication remains gated by server configuration.
 
 ### Phase 0 — Product specification and interaction design
 
@@ -184,7 +184,7 @@ The same responsive application must adapt layouts, navigation, and controls to 
 - Today dashboard, daily priorities, and weekly/monthly calendar views.
 - Quick completion, undo, partial completion, fallback actions, and explicit pauses.
 - Basic completion history, an overall daily streak, and separate schedule-aware habit consistency.
-- Day-end progress locking with later annotations, two automatic monthly freezes with final coverage rules pending, explicit pause behaviour, and overdue-to-missed/late-completed task transitions.
+- Day-end progress locking with later annotations, two automatic monthly freezes with confirmed overall-streak coverage, explicit pause behaviour, and overdue-to-missed/late-completed task transitions.
 - Curated habit and goal templates.
 - User-created private/public templates with publishing previews.
 - Community template discovery, bookmarks, ratings, and creator attribution.
@@ -406,9 +406,9 @@ Technical references for the selected setup: [React's Vite/TypeScript setup](htt
 
 ## 12. Outstanding decisions and recommendations
 
-The following are recommendations or questions, not confirmed product rules:
+Confirmed decisions are marked below; other items remain recommendations for subsequent phases.
 
-1. **Freeze coverage:** The overall daily streak is the requested direction. Recommend spending one freeze only when an existing overall streak faces a day with zero fully completed habits; keep the streak count unchanged, award no XP, and leave individual missed habits unchanged. Recommend two grants at the start of each local calendar month without rollover, resolving the final day of the previous month against its own allowance. Do not grant extra freezes through time-zone changes. Confirm overall protection versus the user's alternative of protecting one individual habit. Decide separately whether a completely unscheduled/all-paused day consumes a freeze or breaks the overall streak; pausing must not become unlimited protection.
+1. **Freeze coverage — confirmed November 5:** Two grants at the start of each local calendar month, no rollover. Spend one only when an existing overall streak faces a day with zero fully completed habits, including all-paused/unscheduled days. Keep the streak count unchanged, award no completion credit or XP, and leave individual missed habits unchanged. Resolve the previous month's final day against its own allowance.
 2. **Weekly-target habits:** Recommend that one fully completed session (for example, one 30-minute workout toward three workouts/week) qualifies for today's overall streak. The individual weekly consistency streak advances only when the entire weekly target is met; do not apply daily freezes to unmet weekly targets. Aggregate targets without a session definition need an explicit daily qualifying unit before they can earn overall streak credit.
 3. **Remaining history rules:** Daily locking with later annotations and late task completion are confirmed in Section 5. Deletion remains available for personal content and account removal; specify its effect on reward history. Define offline late-arrival policy before Phase 8. Task-only days are not yet eligible for the overall habit-based streak; confirm if tasks should also qualify.
 4. **Goal calculations:** Recommend milestone percentages initially, with equal or explicit weights selected per goal. Confirm whether manual progress and metric-target modes should also ship initially; freeze historical configurations rather than retroactively recalculating old daily snapshots.
@@ -416,11 +416,79 @@ The following are recommendations or questions, not confirmed product rules:
 6. **Leagues and quests:** Recommend cohorts of up to 30 real participants, initially grouped by league tier and time-zone band, later refined by recent eligible XP. Allow smaller groups during early use and labeled test accounts locally. Promotion/demotion thresholds and tie rules remain open. Recommend up to three achievable daily quests based on a user's existing schedule, one quest point per completed quest, and an initial monthly target of 30 points; monthly thresholds must be fixed before participation. These are Momentin proposals, not claims about Duolingo's current thresholds. Decide whether leagues replace the previously planned single global ranking.
 7. **XP:** Recommend fixed completion awards and daily competitive caps, no partial-completion XP, no awards for creating habits, and no duplicate activity award when several goals are linked. Agree numeric awards and eligible actions before Phase 4; do not automatically grant XP for repeatedly editing targets or goals.
 8. **Audience controls:** Teenagers and adults (13+) and admin report handling are confirmed. Specify age-appropriate profile, discovery, and interaction controls and intended launch countries before external access.
-9. **Device access and reminders:** Different-network phone testing is required; responsive design handles screen differences independently of network access. Netlify is the preferred hosting target, with owner-only application access during development. No deployment exists yet. Recommend in-app reminders in Phase 2, with closed-app browser notifications remaining in Phase 8.
-10. **Implementation and attachments:** React/TypeScript, Express, Neon PostgreSQL, and Netlify are selected. The configurable 250 MB attachment budget remains proposed; authentication and durable private attachment storage still need integration/selection. Continue using free tools and local development alongside hosted testing. See [SETUP.md](SETUP.md) for connection instructions and [Express on Netlify Functions](https://docs.netlify.com/build/frameworks/framework-setup-guides/express/) for the hosting adapter.
+9. **Device access and reminders:** Different-network phone testing is required; responsive design handles screen differences independently of network access. Netlify is the preferred hosting target, with public signup for external testing as requested on November 5. The foundation is deployed on Netlify and connected to Neon. Recommend in-app reminders in Phase 2, with closed-app browser notifications remaining in Phase 8.
+10. **Implementation and attachments:** React/TypeScript, Express, Neon PostgreSQL, and Netlify are selected. Build-phase image allowances are 25 MB private and 25 MB template snapshots per account, with a 2 MB file limit. Authentication and private database-backed image storage are implemented. Continue using free tools and local development alongside hosted testing. See [SETUP.md](SETUP.md) for connection instructions and [Express on Netlify Functions](https://docs.netlify.com/build/frameworks/framework-setup-guides/express/) for the hosting adapter.
 
-## 13. Implementation status — October 28, 2026
+## 13. Implementation status — November 5, 2026
 
-The first foundation increment contains a responsive Today view, browser-only demo, appearance toggle, daily habit creation, partial numeric check-ins, completion/undo, an owner-key-protected Express API, a PostgreSQL migration, and Netlify configuration. The server scopes records to the configured owner, validates inputs, and rejects check-ins outside the current owner-local day. Connected records persist in Neon once configured; the demo retains only today's values locally.
+**Stage: Phase 2 functionality and Phase 1 account controls implemented locally;
+release acceptance and deployment are tracked separately below.**
 
-This is not completion of Phase 1 or Phase 2. Real account authentication, onboarding, schedule versions, history UI, annotations, goals/tasks/templates, rewards/freezes, and uploads remain unimplemented. The owner key is a temporary private development gate. No cloud resources or deployment have been created. Database and hosting connection steps are in SETUP.md.
+Registration is public by default, with server-enforced email verification and
+13+ confirmation. The optional invite mode is available only when explicitly
+configured. Verified accounts for `nirjadesai98@gmail.com` and
+`littlesparkstudio.apps@gmail.com` have template moderation access.
+
+### Phase 2 implementation
+
+- Daily, selected-weekday, weekly-target and every-N-days habit schedules.
+  Targets and configuration are versioned; ordinary edits take effect tomorrow,
+  and weekly schedule changes at the next weekly boundary. Earlier history keeps
+  its original targets. Weekly boundaries are retained per habit.
+- Checkbox, whole-count, duration and numeric habits; partial entries, completion,
+  undo, fallback actions, prospective pause/resume, duplication and archiving.
+- Tasks with priorities, due dates, subtasks, effort and every-N-days recurrence.
+  Each occurrence keeps its own completion date. Five full local days overdue
+  precede missed status; early/late completion records the actual completion day.
+- Goals with milestones and multiple linked habits/tasks, configurable milestone
+  or activity-based progress, and prospective configuration versions. One activity
+  can support multiple goals. Achieved milestones lock after their local day.
+- Categories, tags, search, archived/bookmark filters, Today priorities, and
+  weekly/monthly history calendars with append-only dated habit annotations.
+- Overall daily streak, schedule-aware individual consistency, and automatic
+  freezes: two per local calendar month, no rollover, only protecting an existing
+  overall streak on a day with no full habit completion, including all-paused or
+  unscheduled days. Protection does not increase the count or complete a habit.
+- Curated habit/goal starters, private/public templates, publication preview,
+  discovery, bookmarks, ratings and attribution. Copies use new personal IDs,
+  preserve links between included goals and activities, and contain no progress.
+- Template definition and image versions, independent published image snapshots,
+  unpublishing, creator deletion, reporting and admin moderation. Existing
+  personal copies survive changes/removal of their source.
+- Opt-in in-app reminders and quiet hours. Closed-app/browser push remains Phase 8.
+
+### Phase 1 implementation
+
+- Email/username login, verification, reset, persistent sessions, logout and
+  session listing/revocation. Google sign-in/linking is wired; its local web-client
+  credentials and callback configuration have been connected and checked.
+- Google users choose a unique username during onboarding. Profile preferences,
+  avatars, accessible labels, bright pastel palettes, light/dark/system modes,
+  reduced animations and optional completion audio are available.
+- Private PNG/JPEG/WebP image storage in Neon: 2 MB per image, 25 MB per account.
+  Template image snapshots have a separate 25 MB allowance including versions.
+  These conservative build-phase allowances supersede the earlier proposed
+  250 MB budget; richer storage controls remain future work.
+- JSON data export includes history, configuration, templates and image metadata/
+  authenticated download paths. Download original images separately before account
+  deletion. Account deletion removes personal records, images and authored
+  templates; other users' independent copies remain.
+- Shared responsive navigation, scrollable/collapsible sidebar, persistent
+  light/dark shortcut, top-right dismissible notifications and fresh auth forms.
+
+### Validation and release boundary
+
+Unit/API and browser regression tests cover registration, access, history rules,
+streak boundaries, authentication UX, planner forms, templates and responsive
+layouts. Real PostgreSQL lifecycle verification runs only on an explicitly
+disposable Neon branch, captures verification/reset mail without sending it, and
+uses an injected clock to exercise multiple local days.
+
+The application migrations are additive. See `SETUP.md` for deployment values,
+Google callbacks, the local development clock and the end-to-end walkthrough.
+
+**Still requires live acceptance:** completing Google consent/sign-in with a real
+browser, then checking the deployed release on laptop and phone with separate
+accounts. OAuth initialization and SMTP authentication checks are not claims of
+completed Google sign-in or inbox delivery. No commit, push or Netlify deployment
+is performed automatically by this implementation.

@@ -11,9 +11,9 @@ npm ci
 npm run dev
 ```
 
-Open **http://localhost:5173**. The browser demo needs no credentials. Add daily habits, record partial progress, complete/undo, and switch appearance. Demo data stays in this browser; the demo keeps today's values only and resets progress at local midnight. It is not historical storage or a synchronized account.
+Open **http://127.0.0.1:5173**. Signed-out visitors start at sign-in/signup. A valid session and completed onboarding open Today; habit actions require authentication. Signup results appear in dismissible top-right toasts.
 
-For persistent PostgreSQL records, follow [SETUP.md](SETUP.md). The connected workspace starts empty and never imports demo data automatically.
+For persistent PostgreSQL records, follow [SETUP.md](SETUP.md). New accounts start with an empty private workspace. Old browser-demo records are not loaded or imported.
 
 ## Commands
 
@@ -27,17 +27,30 @@ For persistent PostgreSQL records, follow [SETUP.md](SETUP.md). The connected wo
 
 ## Structure
 
-- `src/`: responsive UI, demo storage, and connected-workspace client.
+- `src/`: responsive authentication screens and private-workspace client.
 - `server/`: protected Express API and parameterized Neon queries.
 - `shared/`: common types and local-date calculation.
 - `db/migrations/`: initial PostgreSQL schema.
 - `netlify/functions/api.ts`: serverless Express adapter.
 - `netlify.toml`: deployment, function routing, and SPA fallback.
 
-## Milestone boundary
+## Implemented workspace
 
-This is a foundation, not a complete Phase 1 or Phase 2 release. The private API uses one temporary owner key, not end-user authentication. All owner queries are scoped on the server, and check-in writes are restricted to the current date in the configured owner time zone. The schema keeps prior-day check-ins, but history UI is not built. Targets cannot yet be edited; habits are daily only.
+Accounts, scheduled habits, tasks, linked goals, history, calendars, streaks,
+freezes, reminders, community templates and admin moderation are available.
+Open **Plan & history** from the sidebar. **Your account** includes avatars,
+private images, sessions, username management, export and deletion.
 
-Still to build: email/Google/username login, verification and recovery, onboarding, user/session tables, versioned schedules, history and annotations, goals/tasks/templates, streak/freeze/XP calculations, attachments, and social features. No fabricated streaks or awards are shown. The owner ID will be retained when real authentication is introduced so records can be associated with the actual account.
+Registration is public by default. Email verification and onboarding remain
+required. Set `AUTH_REGISTRATION_MODE=invite` only if you intentionally want to
+restrict registration with `AUTH_ALLOWED_EMAILS`.
 
-Tests use an injected store; they do not prove live Neon connectivity or database constraints. Run the connection walkthrough in SETUP.md after provisioning Neon. No cloud resources are created by installation or build.
+See [the product plan](MOMENTIN_PRODUCT_PLAN.md#13-implementation-status--november-5-2026)
+for scope and remaining live acceptance checks, and [SETUP.md](SETUP.md) before
+deployment. Google browser consent and hosted cross-device checks are manual.
+
+Run `npm test`, `npm run build` and `npm run test:browser`.
+Real database checks: `scripts/verify-planning.ts` and
+`scripts/verify-accounts.ts` require `AUTH_TEST_DATABASE_URL` and
+`AUTH_TEST_CONFIRM_DISPOSABLE=yes` pointing to an isolated branch; never use the
+working database for these scripts. Captured test emails are not sent.

@@ -7,3 +7,8 @@ dist/
 *.log
 coverage/
 .neon
+playwright-report/
+test-results/
+
+# Downloaded Google OAuth credentials
+client_secret_*.json

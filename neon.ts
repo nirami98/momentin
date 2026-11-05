@@ -2,6 +2,7 @@ import { defineConfig } from "@neon/config/v1";
 
 export default defineConfig({
   // Declare your Neon services here
+  // Username login uses self-managed Better Auth in the existing API.
   auth: false,
   // Branch policy: per-branch tuning
   branch: (branch) => {
